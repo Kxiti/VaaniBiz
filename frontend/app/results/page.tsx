@@ -12,6 +12,7 @@ import OpportunityCard from "@/components/OpportunityCard";
 
 import { Opportunity, Language } from "@/lib/types";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
+import { generateBusinessPlanPDF } from "@/lib/pdfGenerator";
 
 import {
   FaDownload,
@@ -78,6 +79,10 @@ export default function ResultsPage() {
     setActiveSection(null);
   };
 
+  const handleDownloadPDF = () => {
+    generateBusinessPlanPDF(transcription, aiResponse, roadmap, opportunities);
+  };
+
   return (
     <main className="min-h-screen pt-24 pb-12 px-4 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-5xl mx-auto">
@@ -111,6 +116,7 @@ export default function ResultsPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleDownloadPDF}
               className="px-6 py-3 gradient-primary text-white rounded-full font-medium flex items-center gap-2"
             >
               <FaDownload />
@@ -166,9 +172,11 @@ export default function ResultsPage() {
             onStopSpeaking={handleStopSpeaking}
             accentColor="primary"
           >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {aiResponse}
-            </ReactMarkdown>
+            <div className="markdown-content">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {aiResponse}
+              </ReactMarkdown>
+            </div>
           </CollapsibleSection>
         </motion.section>
 

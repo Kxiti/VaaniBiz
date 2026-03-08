@@ -68,14 +68,6 @@ export default function StartupRoadmap({
         <p className="text-gray-600">
           Follow these steps to launch your business successfully
         </p>
-
-        {/* Test button to verify component is working */}
-        <button
-          onClick={() => alert("Helper system is loaded!")}
-          className="mt-4 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-full text-sm font-medium"
-        >
-          🧪 Test Helper System
-        </button>
       </motion.div>
 
       {/* Roadmap Content with Custom Styling */}

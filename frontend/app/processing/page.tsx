@@ -22,11 +22,6 @@ function ProcessingContent() {
     },
     { id: "analyzing", label: "Analyzing market demand", completed: false },
     { id: "roadmap", label: "Creating your startup roadmap", completed: false },
-    {
-      id: "opportunities",
-      label: "Finding local opportunities",
-      completed: false,
-    },
   ]);
 
   useEffect(() => {
@@ -40,18 +35,49 @@ function ProcessingContent() {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         updateStage("understanding", true);
 
-        // Stage 3: Analyzing - Call Bedrock API
-        updateStage("analyzing", false);
-        const aiResponse = await sendMessageToBedrock(transcription);
+        // Stage 3: Analyzing - Call business insights API
+        console.log("Calling business insights API...");
+        const insightsResponse = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: transcription,
+            language: language,
+          }),
+        });
+
+        if (!insightsResponse.ok) {
+          throw new Error("Failed to generate business insights");
+        }
+
+        const insightsData = await insightsResponse.json();
+        const businessAnalysis =
+          insightsData.reply || insightsData.message || "";
+        console.log("Business insights received");
+
         updateStage("analyzing", true);
 
-        // Stage 4: Roadmap
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        updateStage("roadmap", true);
+        // Stage 4: Roadmap - Call roadmap API
+        console.log("Calling roadmap API...");
+        const roadmapResponse = await fetch("/api/roadmap", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessIdea: transcription,
+            businessAnalysis: businessAnalysis,
+            language: language,
+          }),
+        });
 
-        // Stage 5: Opportunities
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        updateStage("opportunities", true);
+        if (!roadmapResponse.ok) {
+          throw new Error("Failed to generate roadmap");
+        }
+
+        const roadmapData = await roadmapResponse.json();
+        const roadmap = roadmapData.reply || roadmapData.message || "";
+        console.log("Roadmap received");
+
+        updateStage("roadmap", true);
 
         // Wait a bit then navigate to results
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -61,7 +87,8 @@ function ProcessingContent() {
           "businessResults",
           JSON.stringify({
             transcription,
-            aiResponse,
+            aiResponse: businessAnalysis,
+            roadmap: roadmap,
             language,
           }),
         );
@@ -69,7 +96,9 @@ function ProcessingContent() {
         router.push("/results");
       } catch (error) {
         console.error("Error processing idea:", error);
-        alert("Something went wrong while analyzing your idea. Please try again.");
+        alert(
+          "Something went wrong while analyzing your idea. Please try again.",
+        );
         router.push("/idea");
       }
     };

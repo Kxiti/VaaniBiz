@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import ProgressPipeline from "@/components/ProgressPipeline";
 import { ProcessingStage } from "@/lib/types";
-import { analyzeBusiness, generateRoadmap, getOpportunities } from "@/lib/api";
+import { sendMessageToBedrock } from "@/lib/bedrockApi";
 
 function ProcessingContent() {
   const router = useRouter();
@@ -31,44 +31,47 @@ function ProcessingContent() {
 
   useEffect(() => {
     const processIdea = async () => {
-      // Stage 1: Listening (immediate)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      updateStage("listening", true);
+      try {
+        // Stage 1: Listening (immediate)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        updateStage("listening", true);
 
-      // Stage 2: Understanding
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      updateStage("understanding", true);
+        // Stage 2: Understanding
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        updateStage("understanding", true);
 
-      // Stage 3: Analyzing
-      const { profile, analytics } = await analyzeBusiness(
-        transcription,
-        language,
-      );
-      updateStage("analyzing", true);
+        // Stage 3: Analyzing - Call Bedrock API
+        updateStage("analyzing", false);
+        const aiResponse = await sendMessageToBedrock(transcription);
+        updateStage("analyzing", true);
 
-      // Stage 4: Roadmap
-      const roadmap = await generateRoadmap(profile);
-      updateStage("roadmap", true);
+        // Stage 4: Roadmap
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        updateStage("roadmap", true);
 
-      // Stage 5: Opportunities
-      const opportunities = await getOpportunities(profile);
-      updateStage("opportunities", true);
+        // Stage 5: Opportunities
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        updateStage("opportunities", true);
 
-      // Wait a bit then navigate to results
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Wait a bit then navigate to results
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Store results in sessionStorage
-      sessionStorage.setItem(
-        "businessResults",
-        JSON.stringify({
-          profile,
-          analytics,
-          roadmap,
-          opportunities,
-        }),
-      );
+        // Store results in sessionStorage
+        sessionStorage.setItem(
+          "businessResults",
+          JSON.stringify({
+            transcription,
+            aiResponse,
+            language,
+          }),
+        );
 
-      router.push("/results");
+        router.push("/results");
+      } catch (error) {
+        console.error("Error processing idea:", error);
+        alert("Something went wrong while analyzing your idea. Please try again.");
+        router.push("/idea");
+      }
     };
 
     if (transcription) {

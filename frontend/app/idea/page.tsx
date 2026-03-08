@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import IdeaInput from "@/components/IdeaInput";
 import LanguageSelector from "@/components/LanguageSelector";
+import ChatInterface from "@/components/ChatInterface";
 import { Language } from "@/lib/types";
 import { transcribeAudio } from "@/lib/api";
 
@@ -18,12 +19,29 @@ export default function IdeaPage() {
     audioBlob: Blob,
     transcription: string,
   ) => {
+    console.log('handleRecordingComplete called');
+    console.log('Audio blob size:', audioBlob.size);
+    console.log('Transcription received:', transcription);
+    console.log('Transcription length:', transcription?.length);
+
     setIsProcessing(true);
 
     try {
       // Use the live transcription from speech recognition
       const text =
         transcription || (await transcribeAudio(audioBlob, selectedLanguage));
+
+      console.log('Final text to use:', text);
+      console.log('Text length:', text?.length);
+
+      // Check if we got any transcription
+      if (!text || text.trim().length === 0) {
+        console.error('No transcription available');
+        alert("No speech was detected. Please try again and speak clearly.");
+        setIsProcessing(false);
+        return;
+      }
+
       setTranscription(text);
 
       // Show transcription briefly
@@ -106,6 +124,24 @@ export default function IdeaPage() {
             "I want to start a tea stall near my college. I have around 50,000
             rupees to invest. The college has about 2,000 students."
           </p>
+        </motion.div>
+
+        {/* Chat Interface Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-12"
+        >
+          <h2 className="text-2xl font-bold text-dark mb-4 text-center">
+            Or <span className="text-primary">Chat</span> with AI Assistant
+          </h2>
+          <p className="text-center text-gray-600 mb-6">
+            Have a conversation about your business idea
+          </p>
+          <div className="bg-white rounded-2xl card-shadow overflow-hidden" style={{ height: "500px" }}>
+            <ChatInterface placeholder="Ask me about your business idea..." />
+          </div>
         </motion.div>
 
         {/* Processing state */}

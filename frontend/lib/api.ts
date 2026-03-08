@@ -11,11 +11,15 @@ export async function transcribeAudio(
   audioBlob: Blob,
   language: string
 ): Promise<string> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  // This function is now a fallback only
+  // The real transcription comes from browser's Speech Recognition API
+  // If we reach here, it means speech recognition didn't capture anything
 
-  // Return mock transcription
-  return "I want to open a small tea stall near my college in Jhansi. I have around 50,000 rupees to start.";
+  console.warn('transcribeAudio called - speech recognition may have failed');
+
+  // In a production app, you would send the audioBlob to a transcription service
+  // For now, return an empty string to indicate no transcription available
+  return "";
 }
 
 export async function analyzeBusiness(

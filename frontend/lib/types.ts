@@ -1,8 +1,8 @@
-export type Language = 
-  | "hindi" 
-  | "tamil" 
+export type Language =
+  | "hindi"
+  | "tamil"
   | "telugu"
-  | "marathi" 
+  | "marathi"
   | "bengali"
   | "gujarati"
   | "kannada"
@@ -83,4 +83,13 @@ export interface ProcessingStage {
   id: string;
   label: string;
   completed: boolean;
+}
+
+export type MessageRole = 'user' | 'assistant';
+
+export interface ChatMessage {
+  id: string;
+  role: MessageRole;
+  content: string;
+  timestamp: Date;
 }

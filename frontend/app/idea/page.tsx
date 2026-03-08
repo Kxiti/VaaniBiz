@@ -19,10 +19,10 @@ export default function IdeaPage() {
     audioBlob: Blob,
     transcription: string,
   ) => {
-    console.log('handleRecordingComplete called');
-    console.log('Audio blob size:', audioBlob.size);
-    console.log('Transcription received:', transcription);
-    console.log('Transcription length:', transcription?.length);
+    console.log("handleRecordingComplete called");
+    console.log("Audio blob size:", audioBlob.size);
+    console.log("Transcription received:", transcription);
+    console.log("Transcription length:", transcription?.length);
 
     setIsProcessing(true);
 
@@ -31,12 +31,12 @@ export default function IdeaPage() {
       const text =
         transcription || (await transcribeAudio(audioBlob, selectedLanguage));
 
-      console.log('Final text to use:', text);
-      console.log('Text length:', text?.length);
+      console.log("Final text to use:", text);
+      console.log("Text length:", text?.length);
 
       // Check if we got any transcription
       if (!text || text.trim().length === 0) {
-        console.error('No transcription available');
+        console.error("No transcription available");
         alert("No speech was detected. Please try again and speak clearly.");
         setIsProcessing(false);
         return;
@@ -90,7 +90,7 @@ export default function IdeaPage() {
             Tell Us Your <span className="text-primary">Business Idea</span>
           </h1>
           <p className="text-xl text-gray-600">
-            Speak or type in your language. We'll understand.
+            Speak or type in your language. We&apos;ll understand.
           </p>
         </motion.div>
 
@@ -121,8 +121,8 @@ export default function IdeaPage() {
         >
           <h3 className="font-semibold text-dark mb-3">Example Idea:</h3>
           <p className="text-gray-600 italic">
-            "I want to start a tea stall near my college. I have around 50,000
-            rupees to invest. The college has about 2,000 students."
+            &quot;I want to start a tea stall near my college. I have around
+            50,000 rupees to invest. The college has about 2,000 students.&quot;
           </p>
         </motion.div>
 
@@ -139,7 +139,10 @@ export default function IdeaPage() {
           <p className="text-center text-gray-600 mb-6">
             Have a conversation about your business idea
           </p>
-          <div className="bg-white rounded-2xl card-shadow overflow-hidden" style={{ height: "500px" }}>
+          <div
+            className="bg-white rounded-2xl card-shadow overflow-hidden"
+            style={{ height: "500px" }}
+          >
             <ChatInterface placeholder="Ask me about your business idea..." />
           </div>
         </motion.div>

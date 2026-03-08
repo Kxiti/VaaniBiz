@@ -206,7 +206,7 @@ export default function Home() {
             href="/idea"
             className="inline-block px-10 py-4 bg-white text-primary rounded-full font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all"
           >
-            Start Now - It's Free
+            Start Now - It&apos;s Free
           </a>
         </motion.div>
       </section>

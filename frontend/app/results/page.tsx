@@ -23,14 +23,13 @@ import {
 } from "react-icons/fa";
 
 export default function ResultsPage() {
-
   const router = useRouter();
 
   const [results, setResults] = useState<any>(null);
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
   const { speak, stop, isSpeaking } = useTextToSpeech(
-    (results?.language as Language) || "english"
+    (results?.language as Language) || "english",
   );
 
   // Load results from sessionStorage
@@ -81,16 +80,13 @@ export default function ResultsPage() {
 
   return (
     <main className="min-h-screen pt-24 pb-12 px-4 bg-gradient-to-b from-gray-50 to-white">
-
       <div className="max-w-5xl mx-auto">
-
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -112,7 +108,6 @@ export default function ResultsPage() {
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center">
-
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -130,7 +125,6 @@ export default function ResultsPage() {
               <FaShare />
               Share Plan
             </motion.button>
-
           </div>
         </motion.div>
 
@@ -140,11 +134,8 @@ export default function ResultsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-8 border-2 border-dashed border-primary/30">
-
             <div className="flex items-start gap-4">
-
               <FaQuoteLeft className="text-primary text-3xl mt-1" />
 
               <div>
@@ -153,14 +144,11 @@ export default function ResultsPage() {
                 </h2>
 
                 <p className="text-gray-700 text-lg italic">
-                  "{transcription}"
+                  &quot;{transcription}&quot;
                 </p>
               </div>
-
             </div>
-
           </div>
-
         </motion.section>
 
         {/* Business Analysis */}
@@ -169,7 +157,6 @@ export default function ResultsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-
           <CollapsibleSection
             title="Business Analysis & Insights"
             icon={<FaLightbulb className="text-2xl" />}
@@ -179,13 +166,10 @@ export default function ResultsPage() {
             onStopSpeaking={handleStopSpeaking}
             accentColor="primary"
           >
-
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {aiResponse}
             </ReactMarkdown>
-
           </CollapsibleSection>
-
         </motion.section>
 
         {/* Startup Roadmap */}
@@ -195,7 +179,6 @@ export default function ResultsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-
             <CollapsibleSection
               title="Startup Roadmap"
               icon={<FaRoad className="text-2xl" />}
@@ -205,47 +188,36 @@ export default function ResultsPage() {
               isSpeaking={activeSection === "roadmap" && isSpeaking}
               onStopSpeaking={handleStopSpeaking}
             >
-
               <StartupRoadmap
                 roadmapContent={roadmap}
                 businessIdea={transcription}
                 language={results.language as Language}
               />
-
             </CollapsibleSection>
-
           </motion.section>
         )}
 
         {/* Opportunities Section */}
         {opportunities.length > 0 && (
-
           <motion.section
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-12"
           >
-
             <h2 className="text-3xl font-bold text-dark mb-6 text-center">
               Business Opportunities
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6">
-
               {opportunities.map((opp, index) => (
-
                 <OpportunityCard
                   key={index}
                   opportunity={opp}
                   delay={index * 0.2}
                 />
-
               ))}
-
             </div>
-
           </motion.section>
-
         )}
 
         {/* CTA */}
@@ -254,7 +226,6 @@ export default function ResultsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-12 gradient-hero rounded-3xl mt-12"
         >
-
           <h2 className="text-3xl font-bold text-white mb-4">
             Ready to Take Action?
           </h2>
@@ -271,11 +242,8 @@ export default function ResultsPage() {
           >
             Create Another Plan
           </motion.button>
-
         </motion.section>
-
       </div>
-
     </main>
   );
 }

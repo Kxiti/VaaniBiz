@@ -389,7 +389,7 @@ function LogoSection({ businessIdea, brandName, aiColors }: { businessIdea: stri
           ))}
         </div>
         <p style={{ margin: 0, fontSize: "13px", color: "#444" }}>
-          Tagline suggestion: <em>"{logos[selected].tagline}"</em>
+          Tagline suggestion: <em>&quot;{logos[selected].tagline}&quot;</em>
         </p>
       </div>
 

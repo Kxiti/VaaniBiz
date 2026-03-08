@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import VoiceRecorder from "@/components/VoiceRecorder";
+import IdeaInput from "@/components/IdeaInput";
 import LanguageSelector from "@/components/LanguageSelector";
 import { Language } from "@/lib/types";
 import { transcribeAudio } from "@/lib/api";
@@ -14,12 +14,16 @@ export default function IdeaPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcription, setTranscription] = useState<string>("");
 
-  const handleRecordingComplete = async (audioBlob: Blob) => {
+  const handleRecordingComplete = async (
+    audioBlob: Blob,
+    transcription: string,
+  ) => {
     setIsProcessing(true);
 
     try {
-      // Transcribe audio
-      const text = await transcribeAudio(audioBlob, selectedLanguage);
+      // Use the live transcription from speech recognition
+      const text =
+        transcription || (await transcribeAudio(audioBlob, selectedLanguage));
       setTranscription(text);
 
       // Show transcription briefly
@@ -36,6 +40,25 @@ export default function IdeaPage() {
     }
   };
 
+  const handleTextSubmit = async (text: string) => {
+    setIsProcessing(true);
+    setTranscription(text);
+
+    try {
+      // Show text briefly
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Navigate to processing page
+      router.push(
+        `/processing?transcription=${encodeURIComponent(text)}&language=${selectedLanguage}`,
+      );
+    } catch (error) {
+      console.error("Error processing text:", error);
+      alert("Something went wrong. Please try again.");
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <main className="min-h-screen pt-24 pb-12 px-4">
       <div className="max-w-2xl mx-auto">
@@ -46,13 +69,10 @@ export default function IdeaPage() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-dark mb-4">
-            Tell Us Your{" "}
-            <span className="gradient-primary bg-clip-text text-transparent">
-              Business Idea
-            </span>
+            Tell Us Your <span className="text-primary">Business Idea</span>
           </h1>
           <p className="text-xl text-gray-600">
-            Speak naturally in your language. We'll understand.
+            Speak or type in your language. We'll understand.
           </p>
         </motion.div>
 
@@ -64,9 +84,14 @@ export default function IdeaPage() {
           />
         </div>
 
-        {/* Voice Recorder */}
+        {/* Combined Voice & Text Input */}
         <div className="mb-12">
-          <VoiceRecorder onRecordingComplete={handleRecordingComplete} />
+          <IdeaInput
+            onVoiceComplete={handleRecordingComplete}
+            onTextSubmit={handleTextSubmit}
+            selectedLanguage={selectedLanguage}
+            disabled={isProcessing}
+          />
         </div>
 
         {/* Example */}

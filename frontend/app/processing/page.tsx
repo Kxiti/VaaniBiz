@@ -94,10 +94,7 @@ function ProcessingContent() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-dark mb-4">
-            Creating Your{" "}
-            <span className="gradient-primary bg-clip-text text-transparent">
-              Business Plan
-            </span>
+            Creating Your <span className="text-primary">Business Plan</span>
           </h1>
           <p className="text-xl text-gray-600">
             Our AI is analyzing your idea and creating a personalized roadmap

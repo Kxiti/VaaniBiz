@@ -50,7 +50,7 @@ export default function HeroSection() {
           Start Your Business
           <br />
           <span className="">
-            Just By Speaking
+            By Speaking or Typing
           </span>
         </motion.h1>
 
@@ -61,7 +61,7 @@ export default function HeroSection() {
           className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto"
         >
           Turn your business idea into a complete startup roadmap in minutes
-          using AI. No typing, no complexity - just speak.
+          using AI. Use voice or text - whatever works for you.
         </motion.p>
 
         <motion.div
@@ -75,7 +75,7 @@ export default function HeroSection() {
             className="group px-8 py-4 gradient-primary text-white rounded-full font-semibold text-lg flex items-center gap-3 hover:shadow-2xl hover:scale-105 transition-all"
           >
             <FaMicrophone className="text-xl" />
-            Try Voice Idea
+            Start Your Idea
             <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
           </Link>
 

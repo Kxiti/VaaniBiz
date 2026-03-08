@@ -17,8 +17,9 @@ export default function Home() {
   const howItWorks = [
     {
       icon: <FaMicrophone className="text-3xl" />,
-      title: "Speak Your Idea",
-      description: "Tell us your business idea in your language using voice",
+      title: "Speak or Type",
+      description:
+        "Tell us your business idea using voice or text in your language",
     },
     {
       icon: <FaBrain className="text-3xl" />,
@@ -123,7 +124,7 @@ export default function Home() {
               Example Business Ideas
             </h2>
             <p className="text-xl text-gray-600">
-              Try speaking ideas like these
+              Try speaking or typing ideas like these
             </p>
           </motion.div>
 

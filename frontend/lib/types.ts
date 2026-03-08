@@ -1,4 +1,37 @@
-export type Language = "hindi" | "tamil" | "marathi" | "english";
+export type Language = 
+  | "hindi" 
+  | "tamil" 
+  | "telugu"
+  | "marathi" 
+  | "bengali"
+  | "gujarati"
+  | "kannada"
+  | "malayalam"
+  | "english";
+
+export const LANGUAGE_CODES: Record<Language, string> = {
+  hindi: "hi-IN",
+  tamil: "ta-IN",
+  telugu: "te-IN",
+  marathi: "mr-IN",
+  bengali: "bn-IN",
+  gujarati: "gu-IN",
+  kannada: "kn-IN",
+  malayalam: "ml-IN",
+  english: "en-IN",
+};
+
+export const LANGUAGE_NAMES: Record<Language, string> = {
+  hindi: "हिंदी",
+  tamil: "தமிழ்",
+  telugu: "తెలుగు",
+  marathi: "मराठी",
+  bengali: "বাংলা",
+  gujarati: "ગુજરાતી",
+  kannada: "ಕನ್ನಡ",
+  malayalam: "മലയാളം",
+  english: "English",
+};
 
 export interface BusinessProfile {
   businessType: string;

@@ -47,9 +47,11 @@ export default function OpportunityCard({
       </div>
 
       {/* Description */}
-      <p className="text-gray-600 mb-4 leading-relaxed">
-        {opportunity.description}
-      </p>
+      <div className="markdown-content text-sm">
+        <p className="text-gray-600 mb-4 leading-relaxed">
+          {opportunity.description}
+        </p>
+      </div>
 
       {/* Action required */}
       <div className="bg-primary/5 rounded-xl p-4 border-l-4 border-primary">

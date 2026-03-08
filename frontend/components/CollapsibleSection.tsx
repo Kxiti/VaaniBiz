@@ -112,7 +112,6 @@ export default function CollapsibleSection({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden"
           >
             <div className="p-6 pt-0 bg-white">{children}</div>
           </motion.div>

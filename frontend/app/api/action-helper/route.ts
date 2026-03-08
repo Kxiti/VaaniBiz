@@ -5,121 +5,183 @@ const BEDROCK_API_URL =
 
 const LANGUAGE_INSTRUCTIONS: Record<string, string> = {
   english: "Respond in English.",
-  hindi: "हिंदी में जवाब दें। (Respond in Hindi)",
-  tamil: "தமிழில் பதிலளிக்கவும். (Respond in Tamil)",
-  telugu: "తెలుగులో సమాధానం ఇవ్వండి. (Respond in Telugu)",
-  marathi: "मराठीत उत्तर द्या. (Respond in Marathi)",
-  bengali: "বাংলায় উত্তর দিন। (Respond in Bengali)",
-  gujarati: "ગુજરાતીમાં જવાબ આપો. (Respond in Gujarati)",
-  kannada: "ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರಿಸಿ. (Respond in Kannada)",
-  malayalam: "മലയാളത്തിൽ ഉത്തരം നൽകുക. (Respond in Malayalam)",
+  hindi: "हिंदी में जवाब दें।",
+  tamil: "தமிழில் பதிலளிக்கவும்.",
+  telugu: "తెలుగులో సమాధానం ఇవ్వండి.",
+  marathi: "मराठीत उत्तर द्या.",
+  bengali: "বাংলায় উত্তর দিন।",
+  gujarati: "ગુજરાતીમાં જવાબ આપો.",
+  kannada: "ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರಿಸಿ.",
+  malayalam: "മലയാളത്തിൽ ഉത്തരം നൽകുക.",
 };
 
-const ACTION_PROMPTS: Record<string, string> = {
-  "whatsapp-message": `Create a professional WhatsApp message that is:
-- Clear and easy to understand
-- Friendly and approachable
-- Under 200 words
-- Includes relevant emojis
-- Has a clear call-to-action
-- Written in simple language for Tier 2/3 India audience`,
+// Each action type has a completely distinct, specific prompt
+function buildPrompt(actionType: string, businessIdea: string, stepTitle: string, userInput: string): string {
+  switch (actionType) {
+    case "whatsapp-message":
+      return `Write 3 professional WhatsApp templates for: "${businessIdea}"
+Context: "${stepTitle}"
 
-  "poster-generator": `Create poster content with:
-- Catchy headline (5-7 words)
-- Key information in bullet points
-- Suggested colors and design elements
-- Contact details placeholder
-- Call-to-action
-- Festival/seasonal tie-in if relevant`,
+Message 1 (Announcement): Short, exciting, with emojis.
+Message 2 (Offer): Focus on a specific deal/benefit.
+Message 3 (Follow-up): Gentle reminder, high trust.
 
-  "video-pitch": `Write a 60-90 second video script that:
-- Opens with a hook
-- Explains the business clearly
-- Highlights key benefits
-- Includes emotional appeal
-- Ends with strong call-to-action
-- Uses simple, conversational language`,
+Use a friendly Indian conversational style. Include [My Name] and [Contact] placeholders.`;
 
-  "business-explainer": `Explain the business in a professional yet simple way:
-- What the business does
-- Who it serves
-- Why it's needed
-- How it makes money
-- What makes it unique
-- Written for bank officers/officials`,
+    case "thumbnail-creator":
+      return `Generate 3 high-CTR thumbnail concepts for: "${businessIdea}"
+Brand Name: "${userInput || "Your Brand"}"
+Context: "${stepTitle}"
 
-  "supplier-message": `Create a professional supplier outreach message:
-- Introduce the business
-- State requirements clearly
-- Ask for pricing/samples
-- Mention order volume potential
-- Request meeting/call
-- Professional but friendly tone`,
+Design Concepts:
+- VIBE: [What emotion to trigger?]
+- COLORS: [Hex codes for contrast]
+- CONCEPT 1: [Text & Visual description]
+- CONCEPT 2: [Text & Visual description]
+- CONCEPT 3: [Text & Visual description]`;
 
-  "customer-message": `Create an engaging customer message:
-- Grab attention immediately
-- Highlight key benefits
-- Create urgency or excitement
-- Include special offer if applicable
-- Clear next steps
-- Friendly, welcoming tone`,
+    case "email-creator":
+      return `Write a professional business email for: "${businessIdea}"
+Context: "${stepTitle}"
 
-  "social-media-post": `Create an engaging social media post:
-- Attention-grabbing opening
-- Visual description suggestions
-- Relevant hashtags (5-8)
-- Emoji usage
-- Call-to-action
-- Platform-appropriate length`,
+Provide:
+SUBJECT: (Professional & Clickable)
+BODY: (Formal greeting, clear purpose, specific details related to the step, and a professional sign-off)
 
-  "budget-calculator": `Provide a detailed budget breakdown:
-- Initial investment items with estimated costs
-- Monthly recurring expenses
-- One-time setup costs
-- Emergency fund recommendation
-- Total startup capital needed
-- All costs in INR (₹)`,
+Maintain a polite, business-standard tone suitable for Indian clients or partners.`;
 
-  "location-finder": `Provide location selection guidance:
-- Key factors to consider
-- Ideal characteristics for this business
-- Red flags to avoid
-- How to evaluate foot traffic
-- Rent negotiation tips
-- Local market research tips`,
+    case "reel-ideas":
+      return `Generate 5 viral Reel/Shorts ideas for: "${businessIdea}"
+Context: "${stepTitle}"
 
-  "menu-creator": `Help create a menu/product list:
-- Suggested items/services
-- Pricing strategy for each
-- Popular combinations
-- Seasonal variations
-- Presentation tips
-- Competitive positioning`,
+For each idea include:
+- HOOK: First 3 seconds to grab attention.
+- CONTENT: What happens in the middle.
+- CTA: What should they do after watching.
+- AUDIO: Suggested vibe or trending style.`;
 
-  "pricing-helper": `Provide pricing strategy guidance:
-- Cost calculation method
-- Competitive pricing analysis
-- Profit margin recommendations
-- Discount strategy
-- Premium vs budget options
-- Psychological pricing tips`,
+    case "caption-generator":
+      return `Write 5 catchy social media captions for: "${businessIdea}"
+Context: "${stepTitle}"
 
-  "license-guide": `Provide license and permit guidance:
-- Required licenses for this business
-- Registration process steps
-- Required documents
-- Approximate costs and timeline
-- Where to apply
-- Common mistakes to avoid`,
+Include: 
+- 1 Short & Punchy caption
+- 1 Story-based caption
+- 1 Educational/Tip caption
+- 1 Question-based caption
+- 1 Hard-sell caption
+- 10 Trending Hashtags (relevant to India and the business type)`;
 
-  "generic-helper": `Provide detailed step-by-step guidance:
-- Break down the step into smaller tasks
-- Provide specific action items
-- List required resources
-- Suggest timeline
-- Highlight common challenges
-- Give practical tips`,
-};
+    case "poster-generator":
+      return `Analyze this business: "${businessIdea}"
+Context: "${stepTitle}"
+
+Create a business-specific poster design concept. 
+Provide:
+- BUSINESS_ANALYSIS: [1-sentence analysis of the business vibe]
+- THEME_COLOR: [A specific hex code that fits best]
+- ACCENT_COLOR: [A supporting hex code]
+- HEADLINE: [Bold & Catchy]
+- SUBHEADLINE: [Value proposition]
+- 3_POINTS: [Short benefits]
+- CTA_TEXT: [e.g. Visit Us, Call Now]`;
+
+    case "video-pitch":
+    case "video-script":
+      return `Write a detailed 60-second video script for: "${businessIdea}"
+Context: "${stepTitle}"
+
+Break it down:
+[0-10s] Hook & Problem
+[10-40s] Your Solution & Why it's better
+[40-60s] Conclusion & CTA
+
+Add VISUAL CUES (what to show) and MUSIC VIBE.`;
+
+    case "supplier-message":
+      return `Write a supplier inquiry message for: "${businessIdea}"
+Context: "${stepTitle}"
+
+Ask about:
+- Product availability/MOQ
+- Price lists for wholesale
+- Payment terms (COD/Credit)
+- Delivery timelines
+
+Include a professional introduction of your business.`;
+
+    case "license-guide":
+      return `List essential registrations/licenses for: "${businessIdea}"
+Context: "${stepTitle}"
+
+Provide a checklist with:
+1. License Name
+2. Where to Apply (Website)
+3. Est. Cost (INR)
+4. Timeline
+
+Add 3 "Common Mistakes" to avoid in the legal process.`;
+
+    case "budget-calculator":
+      return `Create a startup budget for: "${businessIdea}"
+Context: "${stepTitle}"
+
+Format as a simple table:
+- Setup Costs (One-time)
+- Monthly Ops Costs (Recurring)
+- Total Capital Needed
+- 3 Money-Saving Tips for an Indian startup.`;
+
+    case "location-finder":
+      return `Location guide for: "${businessIdea}"
+Context: "${stepTitle}"
+
+List:
+- 5 Ideal location traits.
+- 10-point selection checklist.
+- 3 Rent negotiation tips for Indian landlords.
+- Red flags to watch out for.`;
+
+    case "brand-name-generator":
+    case "name-generator":
+      return `Suggest 15 creative brand names for: "${businessIdea}"
+Context: "${stepTitle}"
+
+Variations:
+- 5 Modern English names
+- 5 Traditional/Sanskrit-based names
+- 5 Catchy "Hinglish" combinations
+
+Also, provide a one-line meaning for each.`;
+
+    case "logo-generator":
+      return `Analyze this business idea: "${businessIdea}"
+Proposed Brand Name: "${userInput || "Your Brand"}"
+
+Provide a structured design concept for 3 logos:
+- ANALYSIS: [1-sentence business vibe analysis]
+- PRIMARY_COLOR: [Best hex code for this business type]
+- SECONDARY_COLOR: [Supporting hex code]
+- ACCENT_COLOR: [Punchy accent hex code]
+
+Then for 3 concepts:
+CONCEPT 1 (Modern): [Symbol idea]
+CONCEPT 2 (Traditional): [Symbol idea]
+CONCEPT 3 (Minimal): [Symbol idea]
+
+TAGLINE: [A catchy tagline]`;
+
+    case "generic-helper":
+    default:
+      return `Expert guidance for: "${businessIdea}"
+Step: "${stepTitle}"
+
+Provide:
+- WHAT TO DO (3-5 clear steps)
+- RESOURCES NEEDED
+- PRO TIP (Specific to Indian market)`;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -127,60 +189,66 @@ export async function POST(request: NextRequest) {
       actionType,
       stepTitle,
       businessIdea,
-      userInput,
+      userInput = "",
       language = "english",
     } = await request.json();
 
-    // Build the prompt
-    const actionPrompt = ACTION_PROMPTS[actionType] || ACTION_PROMPTS["generic-helper"];
-    const languageInstruction = LANGUAGE_INSTRUCTIONS[language] || LANGUAGE_INSTRUCTIONS["english"];
+    console.log("Action helper called:", { actionType, stepTitle, businessIdea, language });
 
-    const systemPrompt = `You are a helpful business assistant for first-time entrepreneurs in India.
-${actionPrompt}
+    const languageInstruction =
+      LANGUAGE_INSTRUCTIONS[language] || LANGUAGE_INSTRUCTIONS["english"];
 
+    const taskPrompt = buildPrompt(actionType, businessIdea, stepTitle, userInput);
+
+    const fullMessage = `You are an expert business consultant helping first-time entrepreneurs in India.
 ${languageInstruction}
+Use simple language. Be specific. Use INR (₹) for costs. Consider Indian market context.
 
-Keep language simple (6th grade reading level).
-Be encouraging and supportive.
-Provide practical, actionable content.
-Consider Indian context (local resources, costs in INR, cultural factors).`;
+${taskPrompt}`;
 
-    const userPrompt = `Business Idea: ${businessIdea}
-
-Current Step: ${stepTitle}
-
-${userInput ? `Additional Details: ${userInput}` : ""}
-
-Please help me complete this step by generating the appropriate content.`;
-
-    // Call Bedrock API
     const response = await fetch(BEDROCK_API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: "user",
-            content: `${systemPrompt}\n\n${userPrompt}`,
-          },
-        ],
-      }),
+      headers: { "Content-Type": "application/json" },
+      // ✅ Correct format your Lambda expects
+      body: JSON.stringify({ message: fullMessage }),
     });
 
+    const responseText = await response.text();
+    console.log("Bedrock status:", response.status);
+
     if (!response.ok) {
-      throw new Error("Failed to generate content");
+      return NextResponse.json(
+        { error: `Bedrock API error: ${response.status}`, details: responseText },
+        { status: response.status }
+      );
     }
 
-    const data = await response.json();
-    const content = data.response || data.content || "Unable to generate content. Please try again.";
+    let data: any;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON from Bedrock" }, { status: 500 });
+    }
+
+    // Handle all Lambda response shapes
+    const content =
+      data?.reply ||
+      data?.response ||
+      data?.content ||
+      data?.message ||
+      data?.text ||
+      (typeof data === "string" ? data : null);
+
+    if (!content) {
+      console.error("No content in response:", data);
+      return NextResponse.json({ error: "No content in response", raw: data }, { status: 500 });
+    }
 
     return NextResponse.json({ content });
   } catch (error) {
     console.error("Action helper error:", error);
     return NextResponse.json(
-      { error: "Failed to generate content" },
+      { error: "Internal server error", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaMicrophone, FaKeyboard } from "react-icons/fa";
 import VoiceRecorder from "./VoiceRecorder";
 import ChatInput from "./ChatInput";
-import { Language } from "@/lib/types";
+import { Language, BusinessProfile } from "@/lib/types";
+import { getOpportunities } from "@/lib/api";
 
 type InputMode = "voice" | "text";
 
@@ -27,25 +28,46 @@ export default function IdeaInput({
   const transcriptionRef = useRef<string>("");
 
   const handleTranscriptionUpdate = (text: string) => {
-    console.log('IdeaInput - Transcription update:', text);
+    console.log("IdeaInput - Transcription update:", text);
     setLiveTranscription(text);
     transcriptionRef.current = text;
   };
 
   const handleVoiceComplete = (audioBlob: Blob) => {
     const currentTranscription = transcriptionRef.current;
-    console.log('IdeaInput - handleVoiceComplete called');
-    console.log('IdeaInput - transcriptionRef.current:', transcriptionRef.current);
-    console.log('IdeaInput - liveTranscription state:', liveTranscription);
-    console.log('IdeaInput - currentTranscription:', currentTranscription);
-    console.log('IdeaInput - Audio blob size:', audioBlob.size);
+
+    console.log("IdeaInput - handleVoiceComplete called");
+    console.log("IdeaInput - transcription:", currentTranscription);
 
     onVoiceComplete(audioBlob, currentTranscription);
 
-    // Reset transcription after sending
-    console.log('IdeaInput - Resetting transcription');
+    // Reset transcription
     setLiveTranscription("");
     transcriptionRef.current = "";
+  };
+
+  /**
+   * Text submission handler
+   * Also triggers opportunity generation (optional demo integration)
+   */
+  const handleTextSubmit = async (text: string) => {
+    onTextSubmit(text);
+
+    try {
+      const demoProfile: BusinessProfile = {
+        businessType: text,
+        location: "India",
+        targetMarket: "General",
+        estimatedScale: "Small",
+        requiredResources: [],
+      };
+
+      const opportunities = await getOpportunities(demoProfile);
+
+      console.log("Generated Opportunities:", opportunities);
+    } catch (error) {
+      console.error("Opportunity generation failed:", error);
+    }
   };
 
   return (
@@ -56,10 +78,11 @@ export default function IdeaInput({
           <motion.button
             onClick={() => setInputMode("voice")}
             disabled={disabled}
-            className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${inputMode === "voice"
-              ? "bg-white text-primary shadow-md"
-              : "text-gray-600 hover:text-gray-900"
-              }`}
+            className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
+              inputMode === "voice"
+                ? "bg-white text-primary shadow-md"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
             whileHover={{ scale: disabled ? 1 : 1.02 }}
             whileTap={{ scale: disabled ? 1 : 0.98 }}
           >
@@ -70,10 +93,11 @@ export default function IdeaInput({
           <motion.button
             onClick={() => setInputMode("text")}
             disabled={disabled}
-            className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${inputMode === "text"
-              ? "bg-white text-primary shadow-md"
-              : "text-gray-600 hover:text-gray-900"
-              }`}
+            className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
+              inputMode === "text"
+                ? "bg-white text-primary shadow-md"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
             whileHover={{ scale: disabled ? 1 : 1.02 }}
             whileTap={{ scale: disabled ? 1 : 0.98 }}
           >
@@ -110,13 +134,13 @@ export default function IdeaInput({
           >
             <div className="mb-6">
               <ChatInput
-                onMessageSend={onTextSubmit}
+                onMessageSend={handleTextSubmit}
                 placeholder="Type your business idea here..."
                 disabled={disabled}
               />
             </div>
 
-            {/* Helper text for text mode */}
+            {/* Helper text */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
